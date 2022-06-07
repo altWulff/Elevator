@@ -1,3 +1,5 @@
+"""Main module"""
+
 import random
 
 from src.elevator import Building
@@ -5,6 +7,7 @@ from src.render import Render
 
 
 def main():
+    """This function run main program"""
     floors_amount = random.randrange(5, 20)
     b = Building(floors_amount)
     r = Render()

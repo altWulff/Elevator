@@ -1,8 +1,14 @@
+"""
+Module contain Building, Floor, Elevator and Passenger classes
+"""
+
 import random
 from collections import deque
 
 
 class Building:
+    """Building class"""
+
     def __init__(self, floors_amount: int):
         self.floors_amount = floors_amount
         for f in range(1, self.floors_amount):
@@ -15,6 +21,8 @@ class Building:
 
 
 class Floor:
+    """Floor class"""
+
     def __init__(self, curr_floor, floors_amount):
         self.curr_floor = curr_floor
         self.passengers = [
@@ -25,12 +33,15 @@ class Floor:
         return ", ".join(map(str, self.passengers))
 
     def to_elevator(self, elevator):
+        """Move passengers from current floor to elevator"""
         if elevator.current_floor == self.curr_floor:
             for p in self.passengers:
                 elevator.add_passenger(p)
 
 
 class Elevator:
+    """Elevator class"""
+
     def __init__(self, floors_amount, direction="up"):
         self.floors_amount: int = floors_amount
         self.direction: str = direction
@@ -81,6 +92,8 @@ class Elevator:
 
 
 class Passenger:
+    """Passenger class"""
+
     def __init__(self, floors_amount):
         self.floors_amount: int = floors_amount
         self.curr_floor: int = random.randrange(1, floors_amount)
