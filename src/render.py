@@ -13,9 +13,9 @@ class Render:
     async def view_floor(building, numer_floor):
         """Display passengers and elevator on floor"""
         if building.elevator.current_floor == int(numer_floor):
-            elevator = str(building.elevator).center(30, '_')
+            elevator = str(building.elevator).center(30, "_")
         else:
-            elevator = "".center(30, '_')
+            elevator = "".center(30, "_")
         exit_passengers = str(building[numer_floor].exit_passengers)
         result = f"{exit_passengers.center(3)} | {elevator} | {building[numer_floor]}"
         return result

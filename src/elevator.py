@@ -155,4 +155,3 @@ class Building:
         floor_cursor = str(self.elevator.current_floor)
         await self[floor_cursor].elevator_on_floor(self.elevator)
         await self.elevator.move()
-
