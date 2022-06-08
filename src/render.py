@@ -1,11 +1,15 @@
 """Module for render classes"""
 
+from rich.console import Console
+
 
 class Render:
     """Base render"""
 
+    console = Console()
+
     @staticmethod
-    def view_floor(building, numer_floor):
+    async def view_floor(building, numer_floor):
         """Display passengers and elevator on floor"""
         if building.elevator.current_floor == int(numer_floor):
             elevator = str(building.elevator)
@@ -17,8 +21,10 @@ class Render:
         return result
 
     @staticmethod
-    def view_building(building):
+    async def view_building(building):
         """Display all floors"""
         floors_amount = building.floors_amount
         for i in reversed(range(1, floors_amount)):
-            print(Render.view_floor(building, str(i)))
+            Render.console.print(
+                await Render.view_floor(building, str(i)), style="bold white"
+            )

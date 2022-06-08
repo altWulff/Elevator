@@ -5,6 +5,25 @@ Module contain Building, Floor, Elevator and Passenger classes
 import random
 
 
+class Passenger:
+    """Passenger class"""
+
+    def __init__(self, floors_amount: int):
+        self.floors_amount: int = floors_amount
+        self.curr_floor: int = random.randrange(1, floors_amount)
+        self.set_destination_floor(floors_amount)
+
+        while self.curr_floor == self.destination_floor:
+            self.set_destination_floor(floors_amount)
+
+    def set_destination_floor(self, floors_amount: int) -> None:
+        """Set destination floor"""
+        self.destination_floor: int = random.randrange(1, floors_amount)
+
+    def __repr__(self) -> str:
+        return f"{self.destination_floor}"
+
+
 class Elevator:
     """Elevator class"""
 
@@ -15,15 +34,15 @@ class Elevator:
         self.current_floor: int = 1
         self.passengers: list = []
 
-    def is_max_passengers(self) -> bool:
+    async def is_max_passengers(self) -> bool:
         """Check maximum passenger in elevator"""
         return len(self.passengers) >= self.max_passenger
 
-    def add_passenger(self, passenger) -> None:
+    async def add_passenger(self, passenger: Passenger) -> None:
         """Add passenger from elevator"""
         self.passengers.append(passenger)
 
-    def exit_passenger(self, passenger) -> None:
+    async def exit_passenger(self, passenger) -> None:
         """Remove passenger from elevator"""
         indx = self.passengers.index(passenger)
         self.passengers.pop(indx)
@@ -33,10 +52,9 @@ class Elevator:
             direction = "^"
         else:
             direction = "v"
-        destination = f"to {self.destination_floor}"
-        return f"{destination} | {direction} {list(self.passengers)} {direction} |"
+        return f"| {direction} {self.passengers} {direction} |"
 
-    def move_up(self, to_floor: int = 1) -> None:
+    async def move_up(self, to_floor: int = 1) -> None:
         """
         Move up elevator
         :param to_floor: default 1
@@ -44,7 +62,7 @@ class Elevator:
         """
         self.current_floor += to_floor
 
-    def move_down(self, to_floor: int = 1) -> None:
+    async def move_down(self, to_floor: int = 1) -> None:
         """
         Move down elevator
         :param to_floor: default 1
@@ -52,18 +70,18 @@ class Elevator:
         """
         self.current_floor -= to_floor
 
-    def move(self) -> None:
+    async def move(self) -> None:
         """Move elevator, default its up"""
         if self.current_floor == 1:
             self.direction = "up"
 
         if self.direction == "up":
             if self.current_floor < self.floors_amount - 1:
-                self.move_up()
+                await self.move_up()
             else:
                 self.direction = "down"
         else:
-            self.move_down()
+            await self.move_down()
 
     @property
     def destination_floor(self) -> int:
@@ -94,26 +112,26 @@ class Floor:
     def __repr__(self) -> str:
         return ", ".join(map(str, self.passengers))
 
-    def is_destination_floor(self, passenger) -> bool:
+    async def is_destination_floor(self, passenger) -> bool:
         """Check diff passenger.floor to current floor"""
         return passenger.destination_floor == self.curr_floor
 
-    def exit_from_elevator(self, elevator: Elevator) -> None:
+    async def exit_from_elevator(self, elevator: Elevator) -> None:
         """Exit passengers from elevator"""
         for passenger in elevator.passengers:
-            if self.is_destination_floor(passenger):
+            if await self.is_destination_floor(passenger):
                 self.exit_passengers += 1
-                elevator.exit_passenger(passenger)
+                await elevator.exit_passenger(passenger)
 
-    def elevator_on_floor(self, elevator: Elevator):
+    async def elevator_on_floor(self, elevator: Elevator):
         """Move passengers from current floor to elevator"""
         if elevator.current_floor == self.curr_floor:
 
             for _ in self.passengers:
-                if not elevator.is_max_passengers():
-                    elevator.add_passenger(self.passengers.pop())
+                if not await elevator.is_max_passengers():
+                    await elevator.add_passenger(self.passengers.pop())
 
-            self.exit_from_elevator(elevator)
+            await self.exit_from_elevator(elevator)
 
 
 class Building:
@@ -129,34 +147,15 @@ class Building:
     def __getitem__(self, item):
         return self.__dict__[item]
 
-    def run(self):
+    async def run(self):
         """
         Main run to other classes
         :return: None
         """
         for i in range(1, self.floors_amount):
-            self[str(i)].elevator_on_floor(self.elevator)
+            await self[str(i)].elevator_on_floor(self.elevator)
             if not self[str(i)].passengers or not self.elevator.passengers:
-                self.elevator.move()
+                await self.elevator.move()
 
         if self.elevator.current_floor != self.elevator.destination_floor:
-            self.elevator.move()
-
-
-class Passenger:
-    """Passenger class"""
-
-    def __init__(self, floors_amount: int):
-        self.floors_amount: int = floors_amount
-        self.curr_floor: int = random.randrange(1, floors_amount)
-        self.set_destination_floor(floors_amount)
-
-        while self.curr_floor == self.destination_floor:
-            self.set_destination_floor(floors_amount)
-
-    def set_destination_floor(self, floors_amount: int) -> None:
-        """Set destination floor"""
-        self.destination_floor: int = random.randrange(1, floors_amount)
-
-    def __repr__(self) -> str:
-        return f"{self.destination_floor}"
+            await self.elevator.move()
