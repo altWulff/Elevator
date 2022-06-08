@@ -62,7 +62,7 @@ class Elevator:
         Elevator destination floor, max value from passengers destination
         default destination 1
         """
-        floors = [f.dest_floor for f in self.passengers]
+        floors = [f.destination_floor for f in self.passengers]
         try:
             return max(floors)
         except ValueError:
@@ -86,7 +86,7 @@ class Floor:
     def exit_from_elevator(self, elevator: Elevator) -> None:
         """Exit passengers from elevator"""
         for passenger in elevator.passengers:
-            if passenger.dest_floor == self.curr_floor:
+            if passenger.destination_floor == self.curr_floor:
                 if elevator.passengers:
                     self.exit_passengers += 1
                     elevator.exit_passenger(passenger)
@@ -131,14 +131,14 @@ class Passenger:
     def __init__(self, floors_amount: int):
         self.floors_amount: int = floors_amount
         self.curr_floor: int = random.randrange(1, floors_amount)
-        self.set_dest_floor(floors_amount)
+        self.set_destination_floor(floors_amount)
 
-        if self.dest_floor == self.curr_floor:
-            self.set_dest_floor(floors_amount)
+        if self.destination_floor == self.curr_floor:
+            self.set_destination_floor(floors_amount)
 
-    def set_dest_floor(self, floors_amount: int) -> None:
+    def set_destination_floor(self, floors_amount: int) -> None:
         """Set destination floor"""
-        self.dest_floor: int = random.randrange(1, floors_amount)
+        self.destination_floor: int = random.randrange(1, floors_amount)
 
     def __repr__(self) -> str:
-        return f"<{self.dest_floor}>"
+        return f"<{self.destination_floor}>"
