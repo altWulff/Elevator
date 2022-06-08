@@ -2,43 +2,31 @@
 
 import random
 
-from src.elevator import Building
-from src.render import Render
+from elevator import Building
+from render import Render
 
 
 def main():
     """This function run main program"""
-    floors_amount = random.randrange(5, 20)
-    b = Building(floors_amount)
-    r = Render()
-    for i in reversed(range(1, floors_amount)):
-        b[str(i)].to_elevator(b.elevator)
-        print(r.view_floor(b, str(i)))
-        b.elevator.move()
-    print("--" * 10, end="\n")
+    floors_amount: int = random.randrange(5, 20)
+    building = Building(floors_amount)
+    render = Render()
 
-    for i in reversed(range(1, floors_amount)):
-        b[str(i)].to_elevator(b.elevator)
-        print(r.view_floor(b, str(i)))
-        b.elevator.move()
+    render.view_building(building)
     print("--" * 10, end="\n")
+    building.run()
 
-    for i in reversed(range(1, floors_amount)):
-        b[str(i)].to_elevator(b.elevator)
-        print(r.view_floor(b, str(i)))
-        b.elevator.move()
+    render.view_building(building)
     print("--" * 10, end="\n")
+    building.run()
 
-    for i in reversed(range(1, floors_amount)):
-        b[str(i)].to_elevator(b.elevator)
-        print(r.view_floor(b, str(i)))
-        b.elevator.move()
+    render.view_building(building)
     print("--" * 10, end="\n")
+    building.run()
 
-    # b.elevator.move()
-    #
-    # for i in reversed(range(1, floors_amount)):
-    #     print(r.view_floor(b, str(i)))
+    render.view_building(building)
+    print("--" * 10, end="\n")
+    building.run()
 
 
 if __name__ == "__main__":
