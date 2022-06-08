@@ -11,22 +11,11 @@ def main():
     floors_amount: int = random.randrange(5, 20)
     building = Building(floors_amount)
     render = Render()
-
-    render.view_building(building)
-    print("--" * 10, end="\n")
-    building.run()
-
-    render.view_building(building)
-    print("--" * 10, end="\n")
-    building.run()
-
-    render.view_building(building)
-    print("--" * 10, end="\n")
-    building.run()
-
-    render.view_building(building)
-    print("--" * 10, end="\n")
-    building.run()
+    
+    for _ in range(20):
+        render.view_building(building)
+        print(str("-"*40).center(20), end="\n")
+        building.run()
 
 
 if __name__ == "__main__":

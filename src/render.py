@@ -10,10 +10,10 @@ class Render:
         if building.elevator.current_floor == int(numer_floor):
             elevator = str(building.elevator)
         else:
-            elevator = " [] "
+            elevator = " "
         exit_passengers = str(building[numer_floor].exit_passengers)
 
-        result = f"{exit_passengers.center(3)}| {elevator.center(10)} | {building[numer_floor]}"
+        result = f"{exit_passengers.center(3)} | {elevator.center(30)} | {building[numer_floor]}"
         return result
 
     @staticmethod

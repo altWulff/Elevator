@@ -29,7 +29,7 @@ class Elevator:
         else:
             direction = "v"
         destination = f"to {self.destination_floor}"
-        return f"{destination}|{direction} {list(self.passengers)} {direction}"
+        return f"{destination} | {direction} {list(self.passengers)} {direction} |"
 
     def move_up(self, to_floor: int = 1) -> None:
         """
@@ -49,10 +49,15 @@ class Elevator:
 
     def move(self) -> None:
         """Move elevator, default its up"""
+        is_not_destination = self.current_floor != self.destination_floor
+        
         if self.floors_amount == self.current_floor:
             self.direction = "down"
+        if self.current_floor == 1:
+            self.direction = "up"
         if self.direction == "up":
-            self.move_up()
+            if is_not_destination:
+                self.move_up()
         else:
             self.move_down()
 
@@ -82,21 +87,22 @@ class Floor:
 
     def __repr__(self) -> str:
         return ", ".join(map(str, self.passengers))
-
+ 
+    def is_destination_floor(self, passenger) -> bool:
+        return passenger.destination_floor == self.curr_floor
+        
     def exit_from_elevator(self, elevator: Elevator) -> None:
         """Exit passengers from elevator"""
         for passenger in elevator.passengers:
-            if passenger.destination_floor == self.curr_floor:
-                if elevator.passengers:
-                    self.exit_passengers += 1
-                    elevator.exit_passenger(passenger)
+            if self.is_destination_floor(passenger) and elevator.passengers:
+                self.exit_passengers += 1
+                elevator.exit_passenger(passenger)
 
     def elevator_on_floor(self, elevator: Elevator):
         """Move passengers from current floor to elevator"""
         if elevator.current_floor == self.curr_floor:
-            while len(elevator.passengers) != elevator.max_passenger:
-                if self.passengers:
-                    elevator.add_passenger(self.passengers.pop())
+            while len(elevator.passengers) != elevator.max_passenger and self.passengers:
+                elevator.add_passenger(self.passengers.pop())
 
                 self.exit_from_elevator(elevator)
 
@@ -121,8 +127,9 @@ class Building:
         """
         for i in range(1, self.floors_amount):
             self[str(i)].elevator_on_floor(self.elevator)
-
-        self.elevator.move()
+        
+        if self.elevator.current_floor != self.elevator.destination_floor:
+            self.elevator.move()
 
 
 class Passenger:
@@ -133,7 +140,7 @@ class Passenger:
         self.curr_floor: int = random.randrange(1, floors_amount)
         self.set_destination_floor(floors_amount)
 
-        if self.destination_floor == self.curr_floor:
+        while self.curr_floor == self.destination_floor:
             self.set_destination_floor(floors_amount)
 
     def set_destination_floor(self, floors_amount: int) -> None:
@@ -141,4 +148,4 @@ class Passenger:
         self.destination_floor: int = random.randrange(1, floors_amount)
 
     def __repr__(self) -> str:
-        return f"<{self.destination_floor}>"
+        return f"{self.destination_floor}"
