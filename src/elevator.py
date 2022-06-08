@@ -101,9 +101,9 @@ class Elevator:
 class Floor:
     """Floor class"""
 
-    def __init__(self, curr_floor: int, floors_amount: int) -> None:
+    def __init__(self, curr_floor: int, floors_amount: int, passengers: int) -> None:
         self.curr_floor: int = curr_floor
-        self.passengers_amount: range = range(random.randrange(0, 10))
+        self.passengers_amount: range = range(random.randrange(0, passengers))
         self.passengers: list[Passenger] = [
             Passenger(floors_amount) for _ in self.passengers_amount
         ]
@@ -113,7 +113,7 @@ class Floor:
         return ", ".join(map(str, self.passengers))
 
     async def is_destination_floor(self, passenger) -> bool:
-        """Check diff passenger.floor to current floor"""
+        """Check diff passengers to current floor"""
         return passenger.destination_floor == self.curr_floor
 
     async def exit_from_elevator(self, elevator: Elevator) -> None:
@@ -137,10 +137,12 @@ class Floor:
 class Building:
     """Building class"""
 
-    def __init__(self, floors_amount: int) -> None:
+    def __init__(self, floors_amount: int, passengers: int) -> None:
         self.floors_amount: int = floors_amount + 1
         for num_floor in range(1, self.floors_amount):
-            setattr(self, f"{num_floor}", Floor(num_floor, self.floors_amount))
+            setattr(
+                self, f"{num_floor}", Floor(num_floor, self.floors_amount, passengers)
+            )
 
         self.elevator: Elevator = Elevator(self.floors_amount)
 
