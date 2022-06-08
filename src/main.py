@@ -22,12 +22,13 @@ async def main(floors_amount: int | None = None, loop: int = 50):
 
 if __name__ == "__main__":
     from pyfiglet import Figlet
-    custom_fig = Figlet(font='graffiti')
-    
-    print(custom_fig.renderText('Elevator'))
+
+    custom_fig = Figlet(font="graffiti")
+
+    print(custom_fig.renderText("Elevator"))
 
     FLOORS_INPUT = int(input("How many building floor? (default range 5-20): "))
-    print('\n')
+    print("\n")
     if not FLOORS_INPUT:
         FLOORS_INPUT = None
     asyncio.run(main(FLOORS_INPUT))
