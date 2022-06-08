@@ -50,7 +50,6 @@ class Elevator:
     def move(self) -> None:
         """Move elevator, default its up"""
         is_not_destination = self.current_floor != self.destination_floor
-        
         if self.floors_amount == self.current_floor:
             self.direction = "down"
         if self.current_floor == 1:
@@ -87,10 +86,11 @@ class Floor:
 
     def __repr__(self) -> str:
         return ", ".join(map(str, self.passengers))
- 
+
     def is_destination_floor(self, passenger) -> bool:
+        """Check diff passenger.floor to current floor"""
         return passenger.destination_floor == self.curr_floor
-        
+
     def exit_from_elevator(self, elevator: Elevator) -> None:
         """Exit passengers from elevator"""
         for passenger in elevator.passengers:
@@ -101,7 +101,9 @@ class Floor:
     def elevator_on_floor(self, elevator: Elevator):
         """Move passengers from current floor to elevator"""
         if elevator.current_floor == self.curr_floor:
-            while len(elevator.passengers) != elevator.max_passenger and self.passengers:
+            while (
+                len(elevator.passengers) != elevator.max_passenger and self.passengers
+            ):
                 elevator.add_passenger(self.passengers.pop())
 
                 self.exit_from_elevator(elevator)
@@ -127,7 +129,7 @@ class Building:
         """
         for i in range(1, self.floors_amount):
             self[str(i)].elevator_on_floor(self.elevator)
-        
+
         if self.elevator.current_floor != self.elevator.destination_floor:
             self.elevator.move()
 
