@@ -11,14 +11,12 @@ class Passenger:
     def __init__(self, floors_amount: int):
         self.floors_amount: int = floors_amount
         self.curr_floor: int = random.randrange(1, floors_amount)
-        self.set_destination_floor(floors_amount)
+        self.destination_floor: int = self.set_destination_floor(floors_amount)
 
-        while self.curr_floor == self.destination_floor:
-            self.set_destination_floor(floors_amount)
-
-    def set_destination_floor(self, floors_amount: int) -> None:
+    def set_destination_floor(self, floors_amount: int):
         """Set destination floor"""
-        self.destination_floor: int = random.randrange(1, floors_amount)
+        destination_range = [i for i in range(1, floors_amount) if i != self.curr_floor]
+        return random.choice(destination_range)
 
     def __repr__(self) -> str:
         return f"{self.destination_floor}"
@@ -103,6 +101,8 @@ class Floor:
 
     def __init__(self, curr_floor: int, floors_amount: int, passengers: int) -> None:
         self.curr_floor: int = curr_floor
+        if passengers == 0:
+            passengers = 1
         self.passengers_amount: range = range(random.randrange(0, passengers))
         self.passengers: list[Passenger] = [
             Passenger(floors_amount) for _ in self.passengers_amount
@@ -126,10 +126,8 @@ class Floor:
     async def elevator_on_floor(self, elevator: Elevator):
         """Move passengers from current floor to elevator"""
         if elevator.current_floor == self.curr_floor:
-
-            for _ in self.passengers:
-                if not await elevator.is_max_passengers():
-                    await elevator.add_passenger(self.passengers.pop())
+            while not await elevator.is_max_passengers() and self.passengers:
+                await elevator.add_passenger(self.passengers.pop())
 
             await self.exit_from_elevator(elevator)
 
@@ -154,10 +152,7 @@ class Building:
         Main run to other classes
         :return: None
         """
-        for i in range(1, self.floors_amount):
-            await self[str(i)].elevator_on_floor(self.elevator)
-            if not self[str(i)].passengers or not self.elevator.passengers:
-                await self.elevator.move()
+        floor_cursor = str(self.elevator.current_floor)
+        await self[floor_cursor].elevator_on_floor(self.elevator)
+        await self.elevator.move()
 
-        if self.elevator.current_floor != self.elevator.destination_floor:
-            await self.elevator.move()
