@@ -12,7 +12,7 @@ def main():
     building = Building(floors_amount)
     render = Render()
 
-    for _ in range(20):
+    for _ in range(50):
         render.view_building(building)
         print(str("-" * 40).center(20), end="\n")
         building.run()
