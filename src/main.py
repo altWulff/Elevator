@@ -13,20 +13,19 @@ async def main(floors_amount: int, steps: int = 50, passengers: int = 10):
     render = Render()
 
     for _ in range(1, steps + 1):
+        if (
+            await building.get_waiting_passengers() == 0
+            and not building.elevator.passengers
+        ):
+            await render.start_line(_)
+            await render.view_building(building)
+            break
+
         await render.start_line(_)
         await render.view_building(building)
         await building.run()
-        print()
 
-
-def step_input(value=None):
-    """Step input function"""
-    if value is None:
-        value = input("How many step? (default 5): ")
-    try:
-        return int(value)
-    except ValueError:
-        return 5
+    print()
 
 
 def floors_input(value=None):
@@ -59,19 +58,20 @@ if __name__ == "__main__":
 
     console.print(custom_fig.renderText(TITLE))
 
-    STEP_INPUT = step_input()
     FLOORS_INPUT = floors_input()
     PASSENGERS_INPUT = passengers_input()
+    ELEVATOR_CAP = 5
+    STEPS = (FLOORS_INPUT * PASSENGERS_INPUT) + ((FLOORS_INPUT * 2) * ELEVATOR_CAP)
 
     console.print(
         f"""Start program with parameters:
-    Steps: {STEP_INPUT}
     Building floors: {FLOORS_INPUT}
     Passengers in floor: {PASSENGERS_INPUT}
+    Maximum steps: {STEPS}
     ...
     """
     )
-    asyncio.run(main(FLOORS_INPUT, STEP_INPUT, PASSENGERS_INPUT))
+    asyncio.run(main(FLOORS_INPUT, STEPS, PASSENGERS_INPUT))
     console.print("End program.")
 
     input("Press Enter to exit ... ")
