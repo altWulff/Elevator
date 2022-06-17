@@ -147,6 +147,14 @@ class Building:
     def __getitem__(self, item):
         return self.__dict__[item]
 
+    async def get_waiting_passengers(self):
+        """Return amount passengers on all floors"""
+        passengers = 0
+        for key, floor in self.__dict__.items():
+            if key not in ["elevator", "floors_amount"]:
+                passengers += len(floor.passengers)
+        return passengers
+
     async def run(self):
         """
         Main run to other classes
